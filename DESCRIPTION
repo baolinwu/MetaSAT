@@ -1,0 +1,11 @@
+Package: MetaSAT
+Title: Meta-analysis of variant-set association test
+Version: 0.1.0
+Description: This package implements various useful functions for meta-analysis of variant-set association test.
+Depends:
+    R (>= 3.0.0)
+License: GPL (>= 2)
+LazyData: true
+Author: Baolin Wu [aut, cre]
+Maintainer: Baolin Wu <baolin@umn.edu>
+RoxygenNote: 6.0.1
