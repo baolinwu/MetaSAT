@@ -42,6 +42,6 @@ U1 = Us + runif(m*K, 0,2)
 FMSAT(U1,Rs)
 }
 \references{
-Guo,B., Massoti,M. and Wu,B. (2018). Efficient and powerful meta-analysis of variant-set association using MetaSAT.
+Guo,B., Massoti,M., Liu,N. and Wu,B. (2018). Efficient and powerful meta-analysis of variant-set association using MetaSAT.
 }
 \keyword{AT}
