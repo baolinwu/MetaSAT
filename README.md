@@ -14,5 +14,6 @@
      assume different effects across variants/studies; GBT type tests
      assume similar effects across all variants/studies; and SBT assumes
      similar effects across variants within one study while allows for
-     different variant-set level effects across studies.
+     different variant-set level effects across studies, which is
+     potentially relevant for cross-ancestry meta-analysis.
 
