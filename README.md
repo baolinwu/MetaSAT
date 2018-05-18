@@ -10,5 +10,9 @@
  - Heterogeneous-effects (HE) models can have varying assumptions on effects  
    - Within one study, GBT assumes similar effects across variants; SST 
      (SKAT; variance component test) assumes heterogeneous effects across variants;
-   - Across studies, HE takes the sum of SST/GBT over studies.
+   - Across studies, HE takes the sum of SST/GBT over studies. SST type tests
+     assume different effects across variants/studies; GBT type tests
+     assume similar effects across all variants/studies; and SBT assumes
+     similar effects across variants within one study while allows for
+     different variant-set level effects across studies.
 
