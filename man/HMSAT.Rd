@@ -40,6 +40,6 @@ U1 = Us + rnorm(m*K)
 HMSAT(U1,Rs)
 }
 \references{
-Guo,B., Massoti,M., Liu,N. and Wu,B. (2018). Efficient and powerful meta-analysis of variant-set association tests using MetaSAT.
+Wu,B., Liu,N. and Zhao,H. (2018). Efficient and powerful meta-analysis of variant-set association tests using MetaSAT.
 }
 \keyword{SAT}

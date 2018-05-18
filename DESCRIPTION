@@ -1,5 +1,5 @@
 Package: MetaSAT
-Title: Meta-analysis of variant-set association test
+Title: Meta-analysis of variant-set association tests
 Version: 0.1.0
 Description: This package implements various useful functions for meta-analysis of variant-set association test.
 Depends:

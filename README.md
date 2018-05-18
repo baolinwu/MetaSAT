@@ -18,4 +18,4 @@
      potentially relevant for cross-ancestry meta-analysis.
 
  - Ref
-   - Guo,B., Massoti,M., Liu,N. and Wu,B. (2018). Efficient and powerful meta-analysis of variant-set association tests using MetaSAT. tech rep. 
+   - Wu,B., Liu,N. and Zhao,H. (2018). Efficient and powerful meta-analysis of variant-set association tests using MetaSAT. tech rep. 

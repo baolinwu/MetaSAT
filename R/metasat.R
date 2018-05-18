@@ -91,7 +91,7 @@ AVAT <- function(U,R, eta=NULL, rho=c((0:5/10)^2,0.5,1)){
 #' @keywords AT
 #' @export
 #' @references
-#' Guo,B., Massoti,M., Liu,N. and Wu,B. (2018). Efficient and powerful meta-analysis of variant-set association tests using MetaSAT.
+#' Wu,B., Liu,N. and Zhao,H. (2018). Efficient and powerful meta-analysis of variant-set association tests using MetaSAT.
 #' @examples
 #' K = 3; m=10
 #' Rs = array(0, dim=c(m,m,K)); Us = matrix(0, m,K)
@@ -132,7 +132,7 @@ FMSAT <- function(Us,Rs, eta=NULL, rho=c((0:5/10)^2,0.5,1)){
 #' @keywords SAT
 #' @export
 #' @references
-#' Guo,B., Massoti,M., Liu,N. and Wu,B. (2018). Efficient and powerful meta-analysis of variant-set association tests using MetaSAT.
+#' Wu,B., Liu,N. and Zhao,H. (2018). Efficient and powerful meta-analysis of variant-set association tests using MetaSAT.
 #' @examples
 #' K = 3; m=10
 #' Rs = array(0, dim=c(m,m,K)); Us = matrix(0, m,K)
@@ -183,7 +183,7 @@ HMSAT <- function(Us,Rs, eta=NULL, rho=c((0:5/10)^2,0.5,1)){
 #' @keywords SAT
 #' @export
 #' @references
-#' Guo,B., Massoti,M., Liu,N. and Wu,B. (2018). Efficient and powerful meta-analysis of variant-set association tests using MetaSAT.
+#' Wu,B., Liu,N. and Zhao,H. (2018). Efficient and powerful meta-analysis of variant-set association tests using MetaSAT.
 #' @examples
 #' K = 3; m=10
 #' Rs = array(0, dim=c(m,m,K)); Us = matrix(0, m,K)
