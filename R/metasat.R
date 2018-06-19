@@ -46,11 +46,8 @@ AVAT <- function(U,R, eta=NULL, rho=(0:10/10)^2){
     pval[k] = KATpval(Qs[k], Lamk[[k]])
   }
   minp = min(pval)
-  ## EPAT(minp, R, rho=rho)
   ## sim
-  if( (minp<1e-8)|(minp>1e-4) ){
-    return( list(p.value=c(minp*1.5,pval[c(1,K)]), pval=pval, rho.est=rho[which.min(pval)]) )
-  }
+  ## if( (minp<1e-8)|(minp>1e-4) )     return( list(p.value=c(minp*1.5,pval[c(1,K)]), pval=pval, rho.est=rho[which.min(pval)]) )
   ## min-pval
   K = length(rho); K1 = K-1
   qval = rep(0,K1)
@@ -239,9 +236,7 @@ RMSAT <- function(Us,Rs, eta=NULL, rho=(0:10/10)^2){
   for(j in 1:L) pval[j] = KATpval(Qs[j], Lamk[[j]])
   minp = min(pval)
   ## sim
-  if( (minp<1e-8)|(minp>1e-4) ){
-    return( list(p.value=c(minp*1.5,pval[c(1,L)]), pval=pval, rho.est=rho[which.min(pval)]) )
-  }
+  ## if( (minp<1e-8)|(minp>1e-4) )    return( list(p.value=c(minp*1.5,pval[c(1,L)]), pval=pval, rho.est=rho[which.min(pval)]) )
   ##
   L1 = L-1
   qval = rep(0,L1)
