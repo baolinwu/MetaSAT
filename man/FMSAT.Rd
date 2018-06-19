@@ -4,29 +4,29 @@
 \alias{FMSAT}
 \title{Fixed-effects meta-analysis of variant-set association}
 \usage{
-FMSAT(Us, Rs, eta = NULL, rho = c((0:5/10)^2, 0.5, 1))
+FMSAT(Us, Rs, eta = NULL, rho = (0:10/10)^2)
 }
 \arguments{
 \item{Us}{matrix of variant test statistics (m by K)}
 
 \item{Rs}{array of covariance matrix for test statistics (mxm by K)}
 
-\item{eta}{coefficient vector for the GBT. Default to equal weights.}
+\item{eta}{coefficient vector for the BT. Default to equal weights.}
 
-\item{rho}{weights assigned to the GBT}
+\item{rho}{weights assigned to the BT}
 }
 \value{
 \describe{
-  \item{p.value}{ p-value for AT }
+  \item{p.value}{ p-values for AT,VT,BT }
   \item{pval}{ vector of p-values for each rho }
   \item{rho.est}{ optimal rho value leading to the minimum p-value }
 }
 }
 \description{
 Conduct meta-analysis of variant-set association test of m variants assuming constant effects across K studies.
-These association statistics are typically Score vector, and direct summation asymptotically amounts to inverse
-variance weighting. In practice, we can always input weighted test statistics. 
-SST: \eqn{Q=(\sum_kU_k)^T(\sum_kU_k)}; GBT: \eqn{(\sum_k\eta^TU_k)^2}; AT: adaptively weighting SST and GBT.
+These association statistics are typically Score vector, and a direct summation asymptotically amounts to inverse
+variance weighting. In practice, we typically input weighted test statistics.
+VT: \eqn{Q=(\sum_kU_k)^T(\sum_kU_k)}; BT: \eqn{(\sum_k\eta^TU_k)^2}; AT: adaptively combine VT and BT.
 }
 \examples{
 K = 3; m=10
@@ -42,6 +42,6 @@ U1 = Us + runif(m*K, 0,2)
 FMSAT(U1,Rs)
 }
 \references{
-Wu,B., Liu,N. and Zhao,H. (2018). Efficient and powerful meta-analysis of variant-set association tests using MetaSAT.
+Wu,B. and Zhao,H. (2018). Efficient and powerful meta-analysis of variant-set association tests using MetaSAT.
 }
-\keyword{AT}
+\keyword{FAT}

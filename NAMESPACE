@@ -2,5 +2,6 @@
 
 export(FMSAT)
 export(HMSAT)
+export(RBAT)
 export(RMSAT)
 useDynLib(MetaSAT)

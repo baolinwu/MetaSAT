@@ -2,20 +2,28 @@
  - An R package for meta-analysis of variant-set association test
 
 -----
-## FE and HE meta-analysis models
+## Meta-analysis models
  - We study meta-analysis methods that can account for varying levels of
      heterogeneity of genetic effects both within and across studies.
- - Fixed-effects (FE) model assumes similar effects and thus directly
-     sums the summary statistics.
- - Heterogeneous-effects (HE) models can have varying assumptions on effects  
-   - Within one study, GBT assumes similar effects across variants; SST 
-     (SKAT; variance component test) assumes heterogeneous effects across variants;
-   - Across studies, HE takes the sum of SST/GBT over studies. SST type tests
-     assume different effects across variants/studies; GBT type tests
-     assume similar effects across all variants/studies; and SBT assumes
-     similar effects across variants within one study while allows for
-     different variant-set level effects across studies, which is
-     potentially relevant for cross-ancestry meta-analysis.
+   - Burden type test (BT): similar variant effects
+   - Variance component test (VT): heterogeneous variant effects
+   - Adaptive test (AT): adaptively combine BT and VT
+ - Fixed-effects (FE) model 
+   - Assumes homogeneous effects across studies.
+ - Heterogeneous-effects (HE) model
+   - heterogeneous effects across studies and across variants within each study
+ - Robust heterogeneous-effects (RHE) model
+   - heterogeneous effects across studies but homogeneous effects across variants within each study
+ - In summary, a total four general tests
+   - FE BT: homogeneous effects across and within studies.
+   - FE VT: homogeneous effects across studies/heterogeneous effects within studies
+   - HE VT: heterogeneous effects across and within studies.
+   - RHE BT: heterogeneous effects across studies/homogeneous effects within studies
+ - And four ATs implemented
+   - FE AT (FAT): combine FE BT and FE VT 
+   - HE AT (HAT): combine FE BT and HE VT
+   - RHE AT (RAT): combine RHE BT and HE VT
+   - BT based AT (BAT): combine FE BT and RHE BT
 
  - Ref
-   - Wu,B., Liu,N. and Zhao,H. (2018). Efficient and powerful meta-analysis of variant-set association tests using MetaSAT. tech rep. 
+   - Wu,B. and Zhao,H. (2018). Efficient and powerful meta-analysis of variant-set association tests using MetaSAT. tech rep. 

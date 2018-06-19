@@ -1,31 +1,31 @@
-## internal func.
+## Internal func.
 # ' Adaptive variant-set association test
 # '
-# ' Adaptive test (AT) is defined based on the minimum p-value of weighted averages of generalized burden test (GBT) and sum of squares test (SST).
-# ' The required inputs are: U (vector of test statistics, say Score vector); R (covariance matrix of U); eta (GBT coefficient);
-# ' rho (vector of weights assigned to the GBT).
-# ' SST: \eqn{U^TU}; GBT: \eqn{(\eta^TU)^2}; minimum p-value over weighted tests: \eqn{(1-\rho)U^TU + \rho(\eta^TU)^2}.
-# ' 
+# ' Adaptive test (AT) is defined based on the minimum p-value of weighted averages of generalized burden test (BT) and sum of squares test (VT).
+# ' The required inputs are: U (vector of test statistics, say Score vector); R (covariance matrix of U); eta (BT coefficient);
+# ' rho (vector of weights assigned to the BT).
+# ' VT: \eqn{U^TU}; BT: \eqn{(\eta^TU)^2}; minimum p-value over weighted tests: \eqn{(1-\rho)U^TU + \rho(\eta^TU)^2}.
+# '
 # ' @param  U    vector of variant test statistics
 # ' @param  R    covariance matrix for test statistics
-# ' @param  eta  coefficient vector for the GBT. Default to equal weights.
-# ' @param  rho  weights for the GBT
-# ' @return 
+# ' @param  eta  coefficient vector for the BT. Default to equal weights.
+# ' @param  rho  weights for the BT
+# ' @return
 # ' \describe{
-# '   \item{p.value}{ p-value for AT }
+# '   \item{p.value}{ p-values for AT,VT,BT }
 # '   \item{pval}{ vector of p-values for each rho }
 # '   \item{rho.est}{ optimal rho value leading to the minimum p-value }
 # ' }
 # ' @keywords adaptive test
 # ' @export
 # ' @references
-# ' Guo,B., Massoti,M., Liu,N. and Wu,B. (2018).  Efficient and powerful meta-analysis of variant-set association tests using MetaSAT.
+# ' Wu,B. and Zhao,H. (2018). Efficient and powerful meta-analysis of variant-set association tests using MetaSAT.
 # ' @examples
 # ' R = cor(matrix(rnorm(500),100,5)*sqrt(0.9)+rnorm(100)*sqrt(0.1))
 # ' Rh = chol(R)
 # ' Z = colSums(Rh*rnorm(5))
 # ' AVAT(Z, R)
-AVAT <- function(U,R, eta=NULL, rho=c((0:5/10)^2,0.5,1)){
+AVAT <- function(U,R, eta=NULL, rho=(0:10/10)^2){
   m = length(U)
   if(is.null(eta)) eta = rep(1,m)
   ##
@@ -38,7 +38,7 @@ AVAT <- function(U,R, eta=NULL, rho=c((0:5/10)^2,0.5,1)){
   Qs = (1-rho)*Q + rho*B^2
   K = length(rho)
   Lamk = vector('list', K)
-  pval = rep(0,K)
+  pval = rep(1,K)
   for(k in 1:K){
     ak = (1-rho[k])*P1 + rho[k]*P2
     aae = zapsmall( abs( eigen(ak,sym=TRUE,only.val=TRUE)$val ) )
@@ -46,6 +46,11 @@ AVAT <- function(U,R, eta=NULL, rho=c((0:5/10)^2,0.5,1)){
     pval[k] = KATpval(Qs[k], Lamk[[k]])
   }
   minp = min(pval)
+  ## EPAT(minp, R, rho=rho)
+  ## sim
+  if( (minp<1e-8)|(minp>1e-4) ){
+    return( list(p.value=c(minp*1.5,pval[c(1,K)]), pval=pval, rho.est=rho[which.min(pval)]) )
+  }
   ## min-pval
   K = length(rho); K1 = K-1
   qval = rep(0,K1)
@@ -68,30 +73,32 @@ AVAT <- function(U,R, eta=NULL, rho=c((0:5/10)^2,0.5,1)){
     prec = prec*2
     p.value = try({ minp + 2*integrate(fint, 0,qkh, abs.tol=minp*prec)$val }, silent=TRUE)
   }
-  return( list(p.value=p.value, pval=pval, rho.est=rho[which.min(pval)]) )
+  ans = c(p.value, pval[rho==0], pval[rho==1])
+  names(ans) = c('AT', 'VT', 'BT')
+  return( list(p.value=ans, pval=pval, rho.est=rho[which.min(pval)]) )
 }
 
 #' Fixed-effects meta-analysis of variant-set association
 #'
 #' Conduct meta-analysis of variant-set association test of m variants assuming constant effects across K studies.
-#' These association statistics are typically Score vector, and direct summation asymptotically amounts to inverse
-#' variance weighting. In practice, we can always input weighted test statistics. 
-#' SST: \eqn{Q=(\sum_kU_k)^T(\sum_kU_k)}; GBT: \eqn{(\sum_k\eta^TU_k)^2}; AT: adaptively weighting SST and GBT. 
-#' 
+#' These association statistics are typically Score vector, and a direct summation asymptotically amounts to inverse
+#' variance weighting. In practice, we typically input weighted test statistics.
+#' VT: \eqn{Q=(\sum_kU_k)^T(\sum_kU_k)}; BT: \eqn{(\sum_k\eta^TU_k)^2}; AT: adaptively combine VT and BT.
+#'
 #' @param  Us    matrix of variant test statistics (m by K)
 #' @param  Rs    array of covariance matrix for test statistics (mxm by K)
-#' @param  eta   coefficient vector for the GBT. Default to equal weights.
-#' @param  rho   weights assigned to the GBT
-#' @return 
+#' @param  eta   coefficient vector for the BT. Default to equal weights.
+#' @param  rho   weights assigned to the BT
+#' @return
 #' \describe{
-#'   \item{p.value}{ p-value for AT }
+#'   \item{p.value}{ p-values for AT,VT,BT }
 #'   \item{pval}{ vector of p-values for each rho }
 #'   \item{rho.est}{ optimal rho value leading to the minimum p-value }
 #' }
-#' @keywords AT
+#' @keywords FAT
 #' @export
 #' @references
-#' Wu,B., Liu,N. and Zhao,H. (2018). Efficient and powerful meta-analysis of variant-set association tests using MetaSAT.
+#' Wu,B. and Zhao,H. (2018). Efficient and powerful meta-analysis of variant-set association tests using MetaSAT.
 #' @examples
 #' K = 3; m=10
 #' Rs = array(0, dim=c(m,m,K)); Us = matrix(0, m,K)
@@ -104,7 +111,7 @@ AVAT <- function(U,R, eta=NULL, rho=c((0:5/10)^2,0.5,1)){
 #' FMSAT(Us,Rs)
 #' U1 = Us + runif(m*K, 0,2)
 #' FMSAT(U1,Rs)
-FMSAT <- function(Us,Rs, eta=NULL, rho=c((0:5/10)^2,0.5,1)){
+FMSAT <- function(Us,Rs, eta=NULL, rho=(0:10/10)^2){
   ## summary
   U = rowSums(Us)
   R = apply(Rs, 1:2, sum)
@@ -117,22 +124,22 @@ FMSAT <- function(Us,Rs, eta=NULL, rho=c((0:5/10)^2,0.5,1)){
 #' Heterogeneous-effects meta-analysis of variant-set association
 #'
 #' Conduct meta-analysis of variant-set association test of m variants assuming heterogeous effects across K studies.
-#' SST: \eqn{Q=\sum_k U_k^TU_k}; GBT: \eqn{(\sum_k\eta_k^TU_k)^2}; AT: adaptively weighting SST and GBT. 
-#' 
+#' VT: \eqn{Q=\sum_k U_k^TU_k}; BT: \eqn{(\sum_k\eta_k^TU_k)^2}; AT: adaptively combine VT and BT.
+#'
 #' @param  Us    matrix of variant test statistics (m, K)
 #' @param  Rs    array of covariance matrix for test statistics (m, m, K)
-#' @param  eta   coefficient vector for the GBT. Default to equal weights.
-#' @param  rho   weights assigned to the GBT
-#' @return 
+#' @param  eta   coefficient vector for the BT. Default to equal weights.
+#' @param  rho   weights assigned to the BT
+#' @return
 #' \describe{
-#'   \item{p.value}{ p-value for the adaptive test (AT) }
+#'   \item{p.value}{ p-values for AT,VT,BT }
 #'   \item{pval}{ vector of p-values for each rho }
 #'   \item{rho.est}{ optimal rho value leading to the minimum p-value }
 #' }
-#' @keywords SAT
+#' @keywords HAT
 #' @export
 #' @references
-#' Wu,B., Liu,N. and Zhao,H. (2018). Efficient and powerful meta-analysis of variant-set association tests using MetaSAT.
+#' Wu,B. and Zhao,H. (2018). Efficient and powerful meta-analysis of variant-set association tests using MetaSAT.
 #' @examples
 #' K = 3; m=10
 #' Rs = array(0, dim=c(m,m,K)); Us = matrix(0, m,K)
@@ -145,7 +152,7 @@ FMSAT <- function(Us,Rs, eta=NULL, rho=c((0:5/10)^2,0.5,1)){
 #' HMSAT(Us,Rs)
 #' U1 = Us + rnorm(m*K)
 #' HMSAT(U1,Rs)
-HMSAT <- function(Us,Rs, eta=NULL, rho=c((0:5/10)^2,0.5,1)){
+HMSAT <- function(Us,Rs, eta=NULL, rho=(0:10/10)^2){
   m = dim(Us)[1]; K = dim(Us)[2]; mK=m*K
   if(is.null(eta)){
     etah = rep(1,mK)
@@ -165,25 +172,25 @@ HMSAT <- function(Us,Rs, eta=NULL, rho=c((0:5/10)^2,0.5,1)){
 }
 
 
-#' Robust heterogeneous-effects meta-analysis of variant-set association 
+#' Robust heterogeneous-effects meta-analysis of variant-set association
 #'
 #' Conduct meta-analysis of variant-set association test of m variants assuming heterogeous effects across K studies.
-#' SST: \eqn{Q=\sum_k U_k^TU_k}; SBT: \eqn{\sum_k(\eta_k^TU_k)^2} 
-#' 
+#' VT: \eqn{Q=\sum_k U_k^TU_k}; BT: \eqn{\sum_k(\eta_k^TU_k)^2}
+#'
 #' @param  Us    matrix of variant test statistics (m by K)
 #' @param  Rs    array of covariance matrix for test statistics (m,m by K)
-#' @param  eta   coefficient vector for the SBT. Default to equal weights.
-#' @param  rho   weights assigned to the SBT
-#' @return 
+#' @param  eta   coefficient matrix for variants (m by K). Default to equal weights.
+#' @param  rho   weights assigned to the BT
+#' @return
 #' \describe{
-#'   \item{p.value}{ p-value for AT }
+#'   \item{p.value}{ p-values for AT,VT,BT and BAT }
 #'   \item{pval}{ vector of p-values for each rho }
 #'   \item{rho.est}{ optimal rho value leading to the minimum p-value }
 #' }
-#' @keywords SAT
+#' @keywords RAT
 #' @export
 #' @references
-#' Wu,B., Liu,N. and Zhao,H. (2018). Efficient and powerful meta-analysis of variant-set association tests using MetaSAT.
+#' Wu,B. and Zhao,H. (2018). Efficient and powerful meta-analysis of variant-set association tests using MetaSAT.
 #' @examples
 #' K = 3; m=10
 #' Rs = array(0, dim=c(m,m,K)); Us = matrix(0, m,K)
@@ -196,7 +203,7 @@ HMSAT <- function(Us,Rs, eta=NULL, rho=c((0:5/10)^2,0.5,1)){
 #' RMSAT(Us,Rs)
 #' U1 = Us + rnorm(m*K,1,1.25)
 #' RMSAT(U1,Rs)
-RMSAT <- function(Us,Rs, eta=NULL, rho=c((0:5/10)^2,0.5,1)){
+RMSAT <- function(Us,Rs, eta=NULL, rho=(0:10/10)^2){
   m = dim(Us)[1]; K = dim(Us)[2]; mK=m*K
   if(is.null(eta)){
     etas = matrix(1, m,K)
@@ -209,7 +216,7 @@ RMSAT <- function(Us,Rs, eta=NULL, rho=c((0:5/10)^2,0.5,1)){
     R1[k] = sum(a1*etas[,k])
     R2[k] = sum(a1^2)
   }
-  ## 
+  ##
   Q = sum(Us^2); B = colSums(Us*etas)
   Qs = (1-rho)*Q + rho*sum(R2/R1^2*B^2)
   L = length(rho); rho1 = rho[-L]
@@ -231,6 +238,11 @@ RMSAT <- function(Us,Rs, eta=NULL, rho=c((0:5/10)^2,0.5,1)){
   pval = rep(1,L)
   for(j in 1:L) pval[j] = KATpval(Qs[j], Lamk[[j]])
   minp = min(pval)
+  ## sim
+  if( (minp<1e-8)|(minp>1e-4) ){
+    return( list(p.value=c(minp*1.5,pval[c(1,L)]), pval=pval, rho.est=rho[which.min(pval)]) )
+  }
+  ##
   L1 = L-1
   qval = rep(0,L1)
   for(j in 1:L1) qval[j] = Liu0.qval(minp, Lamk[[j]])
@@ -242,6 +254,80 @@ RMSAT <- function(Us,Rs, eta=NULL, rho=c((0:5/10)^2,0.5,1)){
   q1x = sapply(q2x, function(x) min( (qval-x)/(1-rho1) ) )
   p1x = KATpval(q1x, Lame)
   p.val = minp - sum( diff(p2x)*(p1x[-1]+p1x[-B])/2 )
-  return( list(p.value=p.val, pval=pval, rho.est=rho[which.min(pval)]) )
+  ans = c(p.val, pval[rho==0], pval[rho==1])
+  names(ans) = c('AT', 'VT', 'BT')
+  return( list(p.value=ans, pval=pval, rho.est=rho[which.min(pval)]) )
 }
 
+#' Adaptive variant-set association test based on FE and RHE meta-analysis models
+#'
+#' Conduct meta-analysis of variant-set association test of m variants assuming similar effects across variants.
+#' RHE BT: \eqn{\sum_k(\eta_k^TU_k)^2}; FE BT: \eqn{(\sum_k\eta_k^TU_k)^2}.
+#'
+#' @param  Us    matrix of variant test statistics (m by K)
+#' @param  Rs    array of covariance matrix for test statistics (m,m by K)
+#' @param  eta   coefficient matrix for variants (m by K). Default to equal weights.
+#' @param  rho   weights assigned to the FE BT
+#' @return
+#' \describe{
+#'   \item{p.value}{ p-values for AT, RHE BT, FE BT }
+#'   \item{pval}{ vector of p-values for each rho }
+#'   \item{rho.est}{ optimal rho value leading to the minimum p-value }
+#' }
+#' @keywords BAT
+#' @export
+#' @references
+#' Wu,B. and Zhao,H. (2018). Efficient and powerful meta-analysis of variant-set association tests using MetaSAT.
+#' @examples
+#' K = 3; m=10
+#' Rs = array(0, dim=c(m,m,K)); Us = matrix(0, m,K)
+#' for(k in 1:K){
+#'   ak = matrix(rnorm(100*m),100,m)*sqrt(0.8)+rnorm(100)*sqrt(0.2)
+#'   Rs[,,k] = cor(ak)
+#'   Rh = chol(Rs[,,k])
+#'   Us[,k] = colSums(Rh*rnorm(m))
+#' }
+#' RBAT(Us,Rs)
+#' U1 = Us + rnorm(m*K,1,1.25)
+#' RBAT(U1,Rs)
+RBAT <- function(Us,Rs, eta=NULL, rho=(0:10/10)^2){
+  m = dim(Us)[1]; K = dim(Us)[2]; mK=m*K
+  if(is.null(eta)){
+    etas = matrix(1, m,K)
+  } else{
+    etas = matrix(rep(eta, K)[1:mK], m,K)
+  }
+  ## summary
+  R1 = R2 = rep(0, K)
+  for(k in 1:K){
+    a1 = colSums(Rs[,,k]*etas[,k])
+    R1[k] = sum(a1*etas[,k])
+    R2[k] = sum(a1^2)
+  }
+  ## BAT
+  U = colSums(Us*etas)*sqrt(R2)/R1
+  R = R2/R1
+  eta = R1/sqrt(R2)
+  ans = AVAT(U,diag(R),eta, rho=rho)
+  return(ans)
+}
+
+## Reference implementation
+RBAT0 <- function(Us,Rs, eta=NULL, rho=(0:10/10)^2){
+  m = dim(Us)[1]; K = dim(Us)[2]; mK=m*K
+  if(is.null(eta)){
+    etas = matrix(1, m,K)
+  } else{
+    etas = matrix(rep(eta, K)[1:mK], m,K)
+  }
+  ## summary
+  R1 = rep(0, K)
+  for(k in 1:K){
+    a1 = colSums(Rs[,,k]*etas[,k])
+    R1[k] = sum(a1*etas[,k])
+  }
+  U = colSums(Us*etas)
+  ## test
+  ans = AVAT(U,diag(R1), rho=rho)
+  return(ans)
+}
