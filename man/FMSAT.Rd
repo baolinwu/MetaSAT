@@ -4,20 +4,20 @@
 \alias{FMSAT}
 \title{Fixed-effects meta-analysis of variant-set association}
 \usage{
-FMSAT(Us, Rs, eta = NULL, rho = (0:10/10)^2)
+FMSAT(Us, Vs, eta = NULL, rho = (0:10/10)^2)
 }
 \arguments{
 \item{Us}{matrix of variant test statistics (m by K)}
 
-\item{Rs}{array of covariance matrix for test statistics (mxm by K)}
+\item{Vs}{array of covariance matrix for test statistics (mxm by K)}
 
-\item{eta}{coefficient vector for the BT. Default to equal weights.}
+\item{eta}{coefficient vector for the FE BT. Default to equal weights.}
 
-\item{rho}{weights assigned to the BT}
+\item{rho}{weights assigned to the FE BT}
 }
 \value{
 \describe{
-  \item{p.value}{ p-values for AT,VT,BT }
+  \item{p.value}{ p-values for FAT, FE VT, FE BT }
   \item{pval}{ vector of p-values for each rho }
   \item{rho.est}{ optimal rho value leading to the minimum p-value }
 }
@@ -26,20 +26,20 @@ FMSAT(Us, Rs, eta = NULL, rho = (0:10/10)^2)
 Conduct meta-analysis of variant-set association test of m variants assuming constant effects across K studies.
 These association statistics are typically Score vector, and a direct summation asymptotically amounts to inverse
 variance weighting. In practice, we typically input weighted test statistics.
-VT: \eqn{Q=(\sum_kU_k)^T(\sum_kU_k)}; BT: \eqn{(\sum_k\eta^TU_k)^2}; AT: adaptively combine VT and BT.
+FE VT: \eqn{(\sum_kU_k)^T(\sum_kU_k)}; FE BT: \eqn{(\sum_k\eta^TU_k)^2}; FAT: adaptively combine FE VT and FE BT.
 }
 \examples{
 K = 3; m=10
-Rs = array(0, dim=c(m,m,K)); Us = matrix(0, m,K)
+Vs = array(0, dim=c(m,m,K)); Us = matrix(0, m,K)
 for(k in 1:K){
   ak = matrix(rnorm(100*m),100,m)*sqrt(0.8)+rnorm(100)*sqrt(0.2)
-  Rs[,,k] = cor(ak)
-  Rh = chol(Rs[,,k])
+  Vs[,,k] = cor(ak)
+  Rh = chol(Vs[,,k])
   Us[,k] = colSums(Rh*rnorm(m))
 }
-FMSAT(Us,Rs)
+FMSAT(Us,Vs)
 U1 = Us + runif(m*K, 0,2)
-FMSAT(U1,Rs)
+FMSAT(U1,Vs)
 }
 \references{
 Wu,B. and Zhao,H. (2018). Efficient and powerful meta-analysis of variant-set association tests using MetaSAT.

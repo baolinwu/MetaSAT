@@ -4,12 +4,12 @@
 \alias{RBAT}
 \title{Adaptive variant-set association test based on FE and RHE meta-analysis models}
 \usage{
-RBAT(Us, Rs, eta = NULL, rho = (0:10/10)^2)
+RBAT(Us, Vs, eta = NULL, rho = (0:10/10)^2)
 }
 \arguments{
 \item{Us}{matrix of variant test statistics (m by K)}
 
-\item{Rs}{array of covariance matrix for test statistics (m,m by K)}
+\item{Vs}{array of covariance matrix for test statistics (m,m by K)}
 
 \item{eta}{coefficient matrix for variants (m by K). Default to equal weights.}
 
@@ -17,27 +17,27 @@ RBAT(Us, Rs, eta = NULL, rho = (0:10/10)^2)
 }
 \value{
 \describe{
-  \item{p.value}{ p-values for AT, RHE BT, FE BT }
+  \item{p.value}{ p-values for BAT, RHE BT, FE BT }
   \item{pval}{ vector of p-values for each rho }
   \item{rho.est}{ optimal rho value leading to the minimum p-value }
 }
 }
 \description{
 Conduct meta-analysis of variant-set association test of m variants assuming similar effects across variants.
-RHE BT: \eqn{\sum_k(\eta_k^TU_k)^2}; FE BT: \eqn{(\sum_k\eta_k^TU_k)^2}.
+RHE BT: \eqn{\sum_k(\eta_k^TU_k)^2}; FE BT: \eqn{(\sum_k\eta_k^TU_k)^2}; BAT: adaptively combine RHE BT and FE BT.
 }
 \examples{
 K = 3; m=10
-Rs = array(0, dim=c(m,m,K)); Us = matrix(0, m,K)
+Vs = array(0, dim=c(m,m,K)); Us = matrix(0, m,K)
 for(k in 1:K){
   ak = matrix(rnorm(100*m),100,m)*sqrt(0.8)+rnorm(100)*sqrt(0.2)
-  Rs[,,k] = cor(ak)
-  Rh = chol(Rs[,,k])
+  Vs[,,k] = cor(ak)
+  Rh = chol(Vs[,,k])
   Us[,k] = colSums(Rh*rnorm(m))
 }
-RBAT(Us,Rs)
+RBAT(Us,Vs)
 U1 = Us + rnorm(m*K,1,1.25)
-RBAT(U1,Rs)
+RBAT(U1,Vs)
 }
 \references{
 Wu,B. and Zhao,H. (2018). Efficient and powerful meta-analysis of variant-set association tests using MetaSAT.
