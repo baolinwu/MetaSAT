@@ -27,3 +27,16 @@
 
  - Ref
    - Wu,B. and Zhao,H. (2018). Efficient and powerful meta-analysis of variant-set association tests using MetaSAT. tech rep. 
+
+## Sample R codes
+ - The MetaSAT R package also contains the summary statistics and their associated asymptotic covariance matrices 
+for 9 variants across 3 studies as discussed in Section 4.
+They can be used to reproduce the analysis results in the manuscript.
+```R
+ data(WZda)
+ Us = WZda$Us; Vs = WZda$Vs
+ FMSAT(Us,Vs)
+ HMSAT(Us,Vs)
+ RMSAT(Us,Vs)
+ RBAT(Us,Vs)
+```
