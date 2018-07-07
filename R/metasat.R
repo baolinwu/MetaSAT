@@ -43,11 +43,11 @@ AVAT <- function(U,R, eta=NULL, rho=(0:10/10)^2){
     ak = (1-rho[k])*P1 + rho[k]*P2
     aae = zapsmall( abs( eigen(ak,sym=TRUE,only.val=TRUE)$val ) )
     Lamk[[k]] = aae[aae>0]
-    pval[k] = KATpval(Qs[k], Lamk[[k]])
+    pval[k] = KATpval(Qs[k], Lamk[[k]], acc=1e-3)
   }
   minp = min(pval)
   ## sim
-  ## if( (minp<1e-8)|(minp>1e-4) )     return( list(p.value=c(minp*1.5,pval[c(1,K)]), pval=pval, rho.est=rho[which.min(pval)]) )
+  ## if( (minp<1e-9)|(minp>1e-8) )     return( list(p.value=c(minp*2.5,pval[c(1,K)]), pval=pval, rho.est=rho[which.min(pval)]) )
   ## min-pval
   K = length(rho); K1 = K-1
   qval = rep(0,K1)
@@ -60,7 +60,7 @@ AVAT <- function(U,R, eta=NULL, rho=(0:10/10)^2){
   fint = function(xu){
     sapply(xu, function(x){
       x1 = min( (qval-tau1*x^2*R1)/(1-rho1) )
-      p1 = KATpval(x1,Lame)
+      p1 = KATpval(x1,Lame, acc=1e-3)
       p1*dnorm(x)
     })
   }
@@ -235,10 +235,10 @@ RMSAT <- function(Us,Vs, eta=NULL, rho=(0:10/10)^2){
     Lame = c(Lame, eigen(V1, sym=TRUE, only.val=TRUE)$val )
   }
   pval = rep(1,L)
-  for(j in 1:L) pval[j] = KATpval(Qs[j], Lamk[[j]])
+  for(j in 1:L) pval[j] = KATpval(Qs[j], Lamk[[j]], acc=1e-3)
   minp = min(pval)
   ## sim
-  ## if( (minp<1e-8)|(minp>1e-4) )    return( list(p.value=c(minp*1.5,pval[c(1,L)]), pval=pval, rho.est=rho[which.min(pval)]) )
+  ##  if( (minp<1e-9)|(minp>1e-8) )    return( list(p.value=c(minp*2.5,pval[c(1,L)]), pval=pval, rho.est=rho[which.min(pval)]) )
   ##
   L1 = L-1
   qval = rep(0,L1)
@@ -247,9 +247,9 @@ RMSAT <- function(Us,Vs, eta=NULL, rho=(0:10/10)^2){
   Lamb = R2/R1;  q2 = KATqval(minp, Lamb)
   B = 1e3
   q2x = seq(0, q2, length=B)
-  p2x = KATpval(q2x, Lamb)
+  p2x = KATpval(q2x, Lamb, acc=1e-3)
   q1x = sapply(q2x, function(x) min( (qval-x)/(1-rho1) ) )
-  p1x = KATpval(q1x, Lame)
+  p1x = KATpval(q1x, Lame, acc=1e-3)
   p.val = minp - sum( diff(p2x)*(p1x[-1]+p1x[-B])/2 )
   ans = c(p.val, pval[rho==0], pval[rho==1])
   names(ans) = c('RAT', 'HE VT', 'RHE BT')
