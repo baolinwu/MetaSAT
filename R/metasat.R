@@ -1,4 +1,4 @@
-## Internal func.
+## Internal func: combining dependent test statistics.
 # ' Adaptive variant-set association test
 # '
 # ' Adaptive test (AT) is defined based on the minimum p-value of weighted averages of generalized burden test (BT) and sum of squares test (VT).
@@ -26,20 +26,20 @@
 # ' Z = colSums(Rh*rnorm(5))
 # ' AVAT(Z, R)
 AVAT <- function(U,R, eta=NULL, rho=(0:10/10)^2){
-  m = length(U)
-  if(is.null(eta)) eta = rep(1,m)
+  if(is.null(eta)) eta = rep(1, length(U))
+  Q = sum(U^2); B = sum(U*eta)
+  Qs = (1-rho)*Q + rho*B^2
   ##
   eR = eigen(R, sym=TRUE); D = sqrt(abs(eR$val))
   U1 = colSums(eR$vec*eta)*D
   Rs = colSums(R*eta); R1 = sum(Rs*eta); R2 = sum(Rs^2)
   P1 = diag(D^2); P2 = outer(U1,U1)
   ## min-pval
-  Q = sum(U^2); B = sum(U*eta)
-  Qs = (1-rho)*Q + rho*B^2
-  K = length(rho)
-  Lamk = vector('list', K)
-  pval = rep(1,K)
-  for(k in 1:K){
+  L = length(rho); L1 = L-1
+  pval = rep(1,L)
+  pval[L] = pchisq(B^2/R1,1,lower=FALSE)
+  Lamk = vector('list', L1)
+  for(k in 1:L1){
     ak = (1-rho[k])*P1 + rho[k]*P2
     aae = zapsmall( abs( eigen(ak,sym=TRUE,only.val=TRUE)$val ) )
     Lamk[[k]] = aae[aae>0]
@@ -48,14 +48,12 @@ AVAT <- function(U,R, eta=NULL, rho=(0:10/10)^2){
   minp = min(pval)
   ## sim
   ## if( (minp<1e-9)|(minp>1e-8) )     return( list(p.value=c(minp*2.5,pval[c(1,K)]), pval=pval, rho.est=rho[which.min(pval)]) )
-  ## min-pval
-  K = length(rho); K1 = K-1
-  qval = rep(0,K1)
-  for(k in 1:K1) qval[k] = Liu0.qval(minp, Lamk[[k]])
+  qval = rep(0,L1)
+  for(k in 1:L1) qval[k] = Liu0.qval(minp, Lamk[[k]])
   V1 = P1 - P2*R2/R1^2
   Lame = eigen(V1, sym=TRUE, only.val=TRUE)$val
   ##
-  rho1 = rho[-K]
+  rho1 = rho[-L]
   tau1 = (1-rho1)*R2/R1^2+rho1
   fint = function(xu){
     sapply(xu, function(x){
@@ -110,8 +108,7 @@ AVAT <- function(U,R, eta=NULL, rho=(0:10/10)^2){
 #' FMSAT(U1,Vs)
 FMSAT <- function(Us,Vs, eta=NULL, rho=(0:10/10)^2){
   ## summary
-  U = rowSums(Us)
-  R = apply(Vs, 1:2, sum)
+  U = rowSums(Us); R = apply(Vs, 1:2, sum)
   ## test
   ans = AVAT(U,R, eta, rho)
   names(ans$p.value) = c('FAT', 'FE VT', 'FE BT')
@@ -239,12 +236,11 @@ RMSAT <- function(Us,Vs, eta=NULL, rho=(0:10/10)^2){
   minp = min(pval)
   ## sim
   ##  if( (minp<1e-9)|(minp>1e-8) )    return( list(p.value=c(minp*2.5,pval[c(1,L)]), pval=pval, rho.est=rho[which.min(pval)]) )
-  ##
   L1 = L-1
   qval = rep(0,L1)
   for(j in 1:L1) qval[j] = Liu0.qval(minp, Lamk[[j]])
   ##
-  Lamb = R2/R1;  q2 = KATqval(minp, Lamb)
+  Lamb = R2/R1;  q2 = Liu0.qval(minp, Lamb) ## q2 = KATqval(minp, Lamb)
   B = 1e3
   q2x = seq(0, q2, length=B)
   p2x = KATpval(q2x, Lamb, acc=1e-3)
@@ -302,10 +298,10 @@ RBAT <- function(Us,Vs, eta=NULL, rho=(0:10/10)^2){
     R2[k] = sum(a1^2)
   }
   ## BAT
-  U = colSums(Us*etas)*sqrt(R2)/R1
-  R = R2/R1
-  eta = R1/sqrt(R2)
-  ans = AVAT(U,diag(R),eta, rho=rho)
+  R = R2/R1; etau = R1/sqrt(R2)
+  U = colSums(Us*etas)/etau
+  ## ans = AVAT(U,diag(R),etau, rho=rho)
+  ans = AVATi(U,R,etau, rho=rho)
   names(ans$p.value) = c('BAT', 'RHE BT', 'FE BT')
   return(ans)
 }
@@ -326,7 +322,56 @@ RBAT0 <- function(Us,Vs, eta=NULL, rho=(0:10/10)^2){
   }
   U = colSums(Us*etas)
   ## test
-  ans = AVAT(U,diag(R1), rho=rho)
+  ## ans = AVAT(U,diag(R1), rho=rho)
+  ans = AVATi(U,R1, rho=rho)
   names(ans$p.value) = c('BAT0', 'RHE BT', 'FE BT')
   return(ans)
+}
+
+## internal func: combining independent tests.
+AVATi <- function(U,Ri, eta=NULL, rho=(0:10/10)^2){
+  m = length(U)
+  if(is.null(eta)) eta = rep(1,m)
+  Q = sum(U^2); B = sum(U*eta)
+  Qs = (1-rho)*Q + rho*B^2
+  ##
+  U1 = eta*sqrt(Ri)
+  P1 = diag(Ri); P2 = outer(U1,U1)
+  R1 = sum(eta^2*Ri);   R2 = sum(eta^2*Ri^2)
+  ## min-pval
+  L = length(rho); L1 = L-1
+  pval = rep(1,L)
+  pval[L] = pchisq(B^2/R1, 1, lower=FALSE)
+  Lamk = vector('list', L1)
+  for(k in 1:L1){
+    ak = (1-rho[k])*P1 + rho[k]*P2
+    aae = zapsmall( abs( eigen(ak,sym=TRUE,only.val=TRUE)$val ) )
+    Lamk[[k]] = aae[aae>0]
+    pval[k] = KATpval(Qs[k], Lamk[[k]], acc=1e-3)
+  }
+  minp = min(pval)
+  ## sim ## if( (minp<1e-9)|(minp>1e-8) )     return( list(p.value=c(minp*2.5,pval[c(1,K)]), pval=pval, rho.est=rho[which.min(pval)]) )
+  qval = rep(0,L1)
+  for(k in 1:L1) qval[k] = Liu0.qval(minp, Lamk[[k]])
+  V1 = P1 - P2*R2/R1^2
+  Lame = eigen(V1, sym=TRUE, only.val=TRUE)$val
+  ##
+  rho1 = rho[-L]
+  tau1 = (1-rho1)*R2/R1^2+rho1
+  fint = function(xu){
+    sapply(xu, function(x){
+      x1 = min( (qval-tau1*x^2*R1)/(1-rho1) )
+      p1 = KATpval(x1,Lame, acc=1e-3)
+      p1*dnorm(x)
+    })
+  }
+  qkh = -qnorm(minp/2); prec = 1e-5
+  p.value = try({ minp + 2*integrate(fint, 0,qkh,  subdivisions=1e3,abs.tol=minp*prec)$val }, silent=TRUE)
+  while(class(p.value)=='try-error'){
+    prec = prec*2
+    p.value = try({ minp + 2*integrate(fint, 0,qkh, abs.tol=minp*prec)$val }, silent=TRUE)
+  }
+  ans = c(p.value, pval[rho==0], pval[rho==1])
+  names(ans) = c('AT', 'VT', 'BT')
+  return( list(p.value=ans, pval=pval, rho.est=rho[which.min(pval)]) )
 }
