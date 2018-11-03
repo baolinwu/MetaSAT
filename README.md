@@ -19,7 +19,7 @@
    - FE VT: homogeneous effects across studies/heterogeneous effects within studies
    - HE VT: heterogeneous effects across and within studies.
    - RHE BT: heterogeneous effects across studies/homogeneous effects within studies
- -  Four ATs are implemented
+ - Four ATs are implemented
    - FE AT (FAT): combine FE BT and FE VT 
    - HE AT (HAT): combine FE BT and HE VT
    - RHE AT (RAT): combine RHE BT and HE VT
