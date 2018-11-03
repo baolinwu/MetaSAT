@@ -19,7 +19,7 @@
 # ' @keywords adaptive test
 # ' @export
 # ' @references
-# ' Wu,B. and Zhao,H. (2018). Efficient and powerful meta-analysis of variant-set association tests using MetaSAT.
+# ' Wu,B. and Zhao,H. (2018) Efficient and powerful meta-analysis of variant-set association tests using MetaSAT.
 # ' @examples
 # ' R = cor(matrix(rnorm(500),100,5)*sqrt(0.9)+rnorm(100)*sqrt(0.1))
 # ' Rh = chol(R)
@@ -93,7 +93,7 @@ AVAT <- function(U,R, eta=NULL, rho=(0:10/10)^2){
 #' @keywords FAT
 #' @export
 #' @references
-#' Wu,B. and Zhao,H. (2018). Efficient and powerful meta-analysis of variant-set association tests using MetaSAT.
+#' Wu,B. and Zhao,H. (2018) Efficient and powerful meta-analysis of variant-set association tests using MetaSAT.
 #' @examples
 #' K = 3; m=10
 #' Vs = array(0, dim=c(m,m,K)); Us = matrix(0, m,K)
@@ -134,7 +134,7 @@ FESAT <- function(Us,Vs, eta=NULL, rho=(0:10/10)^2){
 #' @keywords HAT
 #' @export
 #' @references
-#' Wu,B. and Zhao,H. (2018). Efficient and powerful meta-analysis of variant-set association tests using MetaSAT.
+#' Wu,B. and Zhao,H. (2018) Efficient and powerful meta-analysis of variant-set association tests using MetaSAT.
 #' @examples
 #' K = 3; m=10
 #' Vs = array(0, dim=c(m,m,K)); Us = matrix(0, m,K)
@@ -186,7 +186,7 @@ HESAT <- function(Us,Vs, eta=NULL, rho=(0:10/10)^2){
 #' @keywords RAT
 #' @export
 #' @references
-#' Wu,B. and Zhao,H. (2018). Efficient and powerful meta-analysis of variant-set association tests using MetaSAT.
+#' Wu,B. and Zhao,H. (2018) Efficient and powerful meta-analysis of variant-set association tests using MetaSAT.
 #' @examples
 #' K = 3; m=10
 #' Vs = array(0, dim=c(m,m,K)); Us = matrix(0, m,K)
@@ -270,7 +270,7 @@ RESAT <- function(Us,Vs, eta=NULL, rho=(0:10/10)^2){
 #' @keywords BAT
 #' @export
 #' @references
-#' Wu,B. and Zhao,H. (2018). Efficient and powerful meta-analysis of variant-set association tests using MetaSAT.
+#' Wu,B. and Zhao,H. (2018) Efficient and powerful meta-analysis of variant-set association tests using MetaSAT.
 #' @examples
 #' K = 3; m=10
 #' Vs = array(0, dim=c(m,m,K)); Us = matrix(0, m,K)

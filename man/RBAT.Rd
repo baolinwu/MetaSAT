@@ -40,6 +40,6 @@ U1 = Us + rnorm(m*K,1,1.25)
 RBAT(U1,Vs)
 }
 \references{
-Wu,B. and Zhao,H. (2018). Efficient and powerful meta-analysis of variant-set association tests using MetaSAT.
+Wu,B. and Zhao,H. (2018) Efficient and powerful meta-analysis of variant-set association tests using MetaSAT.
 }
 \keyword{BAT}

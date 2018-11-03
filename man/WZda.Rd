@@ -24,7 +24,7 @@ RESAT(Us,Vs)
 RBAT(Us,Vs)
 }
 \references{
-Wu,B. and Zhao,H. (2018). Efficient and powerful meta-analysis of variant-set association tests using MetaSAT.
+Wu,B. and Zhao,H. (2018) Efficient and powerful meta-analysis of variant-set association tests using MetaSAT.
 
 Wu,B., Guan,W. and Pankow,J.S. (2016) On Efficient and Accurate Calculation of Significance P-Values for Sequence Kernel Association Testing of Variant Set. Ann. Hum. Genet., 80 (2), 123–135.
 

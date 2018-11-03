@@ -42,6 +42,6 @@ U1 = Us + runif(m*K, 0,2)
 FESAT(U1,Vs)
 }
 \references{
-Wu,B. and Zhao,H. (2018). Efficient and powerful meta-analysis of variant-set association tests using MetaSAT.
+Wu,B. and Zhao,H. (2018) Efficient and powerful meta-analysis of variant-set association tests using MetaSAT.
 }
 \keyword{FAT}
