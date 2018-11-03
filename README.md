@@ -35,8 +35,8 @@ They can be used to reproduce the analysis results in the manuscript.
 ```R
  data(WZda)
  Us = WZda$Us; Vs = WZda$Vs
- FMSAT(Us,Vs)
- HMSAT(Us,Vs)
- RMSAT(Us,Vs)
+ FESAT(Us,Vs)
+ HESAT(Us,Vs)
+ RESAT(Us,Vs)
  RBAT(Us,Vs)
 ```

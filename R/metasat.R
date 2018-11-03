@@ -73,7 +73,7 @@ AVAT <- function(U,R, eta=NULL, rho=(0:10/10)^2){
   return( list(p.value=ans, pval=pval, rho.est=rho[which.min(pval)]) )
 }
 
-#' Fixed-effects meta-analysis of variant-set association
+#' Fixed-effects (FE) meta-analysis of variant-set association
 #'
 #' Conduct meta-analysis of variant-set association test of m variants assuming constant effects across K studies.
 #' These association statistics are typically Score vector, and a direct summation asymptotically amounts to inverse
@@ -103,10 +103,10 @@ AVAT <- function(U,R, eta=NULL, rho=(0:10/10)^2){
 #'   Rh = chol(Vs[,,k])
 #'   Us[,k] = colSums(Rh*rnorm(m))
 #' }
-#' FMSAT(Us,Vs)
+#' FESAT(Us,Vs)
 #' U1 = Us + runif(m*K, 0,2)
-#' FMSAT(U1,Vs)
-FMSAT <- function(Us,Vs, eta=NULL, rho=(0:10/10)^2){
+#' FESAT(U1,Vs)
+FESAT <- function(Us,Vs, eta=NULL, rho=(0:10/10)^2){
   ## summary
   U = rowSums(Us); R = apply(Vs, 1:2, sum)
   ## test
@@ -116,7 +116,7 @@ FMSAT <- function(Us,Vs, eta=NULL, rho=(0:10/10)^2){
 }
 
 
-#' Heterogeneous-effects meta-analysis of variant-set association
+#' Heterogeneous-effects (HE) meta-analysis of variant-set association
 #'
 #' Conduct meta-analysis of variant-set association test of m variants assuming heterogeous effects across K studies.
 #' HE VT: \eqn{\sum_k U_k^TU_k}; FE BT: \eqn{(\sum_k\eta_k^TU_k)^2}; HAT: adaptively combine HE VT and FE BT.
@@ -144,10 +144,10 @@ FMSAT <- function(Us,Vs, eta=NULL, rho=(0:10/10)^2){
 #'   Rh = chol(Vs[,,k])
 #'   Us[,k] = colSums(Rh*rnorm(m))
 #' }
-#' HMSAT(Us,Vs)
+#' HESAT(Us,Vs)
 #' U1 = Us + rnorm(m*K)
-#' HMSAT(U1,Vs)
-HMSAT <- function(Us,Vs, eta=NULL, rho=(0:10/10)^2){
+#' HESAT(U1,Vs)
+HESAT <- function(Us,Vs, eta=NULL, rho=(0:10/10)^2){
   m = dim(Us)[1]; K = dim(Us)[2]; mK=m*K
   if(is.null(eta)){
     etah = rep(1,mK)
@@ -196,10 +196,10 @@ HMSAT <- function(Us,Vs, eta=NULL, rho=(0:10/10)^2){
 #'   Rh = chol(Vs[,,k])
 #'   Us[,k] = colSums(Rh*rnorm(m))
 #' }
-#' RMSAT(Us,Vs)
+#' RESAT(Us,Vs)
 #' U1 = Us + rnorm(m*K,1,1.25)
-#' RMSAT(U1,R=Vs)
-RMSAT <- function(Us,Vs, eta=NULL, rho=(0:10/10)^2){
+#' RESAT(U1,R=Vs)
+RESAT <- function(Us,Vs, eta=NULL, rho=(0:10/10)^2){
   m = dim(Us)[1]; K = dim(Us)[2]; mK=m*K
   if(is.null(eta)){
     etas = matrix(1, m,K)

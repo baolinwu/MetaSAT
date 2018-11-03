@@ -18,9 +18,9 @@ A list containing the summary statistics matrix (9x3) and the covariance matrix 
 \examples{
 data(WZda)
 Us = WZda$Us; Vs = WZda$Vs
-FMSAT(Us,Vs)
-HMSAT(Us,Vs)
-RMSAT(Us,Vs)
+FESAT(Us,Vs)
+HESAT(Us,Vs)
+RESAT(Us,Vs)
 RBAT(Us,Vs)
 }
 \references{
@@ -28,6 +28,6 @@ Wu,B. and Zhao,H. (2018). Efficient and powerful meta-analysis of variant-set as
 
 Wu,B., Guan,W. and Pankow,J.S. (2016) On Efficient and Accurate Calculation of Significance P-Values for Sequence Kernel Association Testing of Variant Set. Ann. Hum. Genet., 80 (2), 123–135.
 
-Wessel,J., Chu,A.Y., Willems,S.M. and others. (2015) Low-frequency and rare exome chip vari- ants associate with fasting glucose and type 2 diabetes susceptibility. Nature Communications, 6, 5897.
+Wessel,J., Chu,A.Y., Willems,S.M. and others. (2015) Low-frequency and rare exome chip variants associate with fasting glucose and type 2 diabetes susceptibility. Nature Communications, 6, 5897.
 }
 \keyword{datasets}
